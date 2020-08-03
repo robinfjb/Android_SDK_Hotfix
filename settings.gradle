@@ -1,5 +1,5 @@
 include ':testapp'
 include ':sdk-impl'
-include ':service-dynamic'
+include ':sdk-dynamic'
 include ':sdk'
 rootProject.name = "SDK_Hotfix"

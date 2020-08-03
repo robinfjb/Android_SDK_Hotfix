@@ -75,7 +75,7 @@ public final class HttpUrlTask extends AsyncTask<Void, Void, String> {
             LogUtil.e(HTTP_TAG, "[请求]request:" + request);
             URL httpUrl = new URL(url);
             HttpURLConnection httpURLConnection = (HttpURLConnection) httpUrl.openConnection();
-            if (method.equalsIgnoreCase("post")) {
+            if (method.equalsIgnoreCase("POST")) {
                 httpURLConnection.setDoInput(true);
                 httpURLConnection.setDoOutput(false);
             }
@@ -91,7 +91,7 @@ public final class HttpUrlTask extends AsyncTask<Void, Void, String> {
                 httpURLConnection.setRequestProperty("Content-Encoding", "gzip");
             }
             httpURLConnection.setRequestProperty("Content-Type", "application/json");
-            if (method.equalsIgnoreCase("post")) {
+            if (method.equalsIgnoreCase("POST")) {
                 os = httpURLConnection.getOutputStream();
                 byte[] bytes = request.getBytes(Charset.defaultCharset());
                 if (isGzip) {

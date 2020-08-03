@@ -13,8 +13,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/sdk" />
+            <option value="$PROJECT_DIR$/sdk-dynamic" />
             <option value="$PROJECT_DIR$/sdk-impl" />
-            <option value="$PROJECT_DIR$/service-dynamic" />
             <option value="$PROJECT_DIR$/testapp" />
           </set>
         </option>

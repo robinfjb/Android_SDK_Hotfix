@@ -11,7 +11,7 @@ import robin.sdk.service_dynamic.UpdateManager;
 
 public final class RobinService extends Service {
     public Context context = null;
-    private ServiceProxy lib;
+    private ServiceProxy proxy;
 
     public RobinService() {
     }
@@ -20,16 +20,15 @@ public final class RobinService extends Service {
     public void onCreate() {
         try {
             context = getApplicationContext();
-            lib = serviceLoad();
-            lib.onCreate(this);
+            proxy = serviceLoad();
+            proxy.onCreate(this);
             checkUpdate();
         } catch (Throwable e) {
         }
     }
 
     private ServiceProxy serviceLoad() {
-        ServiceManager serviceManager = new ServiceManager();
-        return serviceManager.getServiceProxy(this);
+        return ServiceManager.getManager().getServiceProxy(this);
     }
 
     private void checkUpdate() {
@@ -38,44 +37,21 @@ public final class RobinService extends Service {
 
     @Override
     public int onStartCommand(Intent var1, int var2, int var3) {
-        try {
-            if (lib != null) {
-                return lib.onStartCommand(var1, var2, var3);
-            } else {
-                return Service.START_NOT_STICKY;
-            }
-        } catch (Throwable e) {
-        }
-        return Service.START_NOT_STICKY;
+        return proxy.onStartCommand(var1, var2, var3);
     }
 
     @Override
     public IBinder onBind(Intent var1) {
-        try {
-            if (lib != null) {
-                return lib.onBind(var1);
-            } else {
-                return null;
-            }
-        } catch (Throwable e) {
-        }
-        return null;
+        return proxy.onBind(var1);
     }
 
     @Override
     public boolean onUnbind(Intent var1) {
-        try {
-            return lib == null || lib.onUnBind(var1);
-        } catch (Throwable e) {
-        }
-        return false;
+        return proxy.onUnBind(var1);
     }
 
     @Override
     public void onDestroy() {
-        try {
-            lib.onDestroy();
-        } catch (Throwable e) {
-        }
+        proxy.onDestroy();
     }
 }

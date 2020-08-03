@@ -42,7 +42,7 @@ public class UpdateManager {
     }
 
     private static void getDyInfo(final Context context) {
-        new HttpUrlTask(10000, "", "get", "http://",
+        new HttpUrlTask(10000, "", "GET", "http://robinfjb.github.io/dynamic_info.json",
                 "", false, new HttpUrlTask.TaskListener() {
             @Override
             public void onTaskComplete(int statusCode, String statusMessage, String response) {
@@ -82,10 +82,10 @@ public class UpdateManager {
     }
 
     public static void checkUpdate(Context context) {
-        if (checkDate(context)) {
+//        if (checkDate(context)) {
             SpUtil.setLastUpdate(context, System.currentTimeMillis());
             getDyInfo(context);
-        }
+//        }
     }
 
     private static boolean checkDate(Context context) {//防止频繁更新

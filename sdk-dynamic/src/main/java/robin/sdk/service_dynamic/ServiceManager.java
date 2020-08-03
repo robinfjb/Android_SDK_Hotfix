@@ -3,6 +3,7 @@ package robin.sdk.service_dynamic;
 import android.content.Context;
 import android.text.TextUtils;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -57,7 +58,7 @@ public class ServiceManager {
             if (checkJar(dyInfo, usingJar)) {
                 DexClassLoader dexClassLoader = new DexClassLoader(usingJar.getAbsolutePath(),
                         context.getCacheDir().getAbsolutePath(), null, context.getClassLoader());
-                Class libclass = dexClassLoader.loadClass(dyInfo.packageName + ".ServiceImpl");
+                Class libclass = dexClassLoader.loadClass(dyInfo.className);
                 libJar = (ServiceProxy) libclass.newInstance();
                 LogUtil.e(DYNAMIC_TAG, "动态包已加载成功 ");
                 newJar.delete();
@@ -86,8 +87,19 @@ public class ServiceManager {
         return lib;
     }
 
+    public String getDynamicServiceName(Context context) {
+       /* try {
+            String dyinfoStr = SpUtil.getDyInfo(context);
+            DyInfo dyInfo = new DyInfo(new JSONObject(dyinfoStr));
+            return dyInfo.className;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
+        return ServiceImpl.class.getName();
+    }
+
     private boolean checkJar(DyInfo dyInfo, File jar) {
-        if(dyInfo == null || TextUtils.isEmpty(dyInfo.packageName) || !jar.exists()) {
+        if(dyInfo == null || TextUtils.isEmpty(dyInfo.className) || !jar.exists()) {
             return false;
         }
         String md5 = Md5Util.getMd5(jar);
