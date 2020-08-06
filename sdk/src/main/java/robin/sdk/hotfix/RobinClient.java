@@ -4,6 +4,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -12,6 +14,7 @@ import android.os.RemoteException;
 
 import robin.sdk.sdk_impl.Constants;
 import robin.sdk.sdk_impl.util.LogUtil;
+import robin.sdk.service_dynamic.util.SpUtil;
 
 public class RobinClient {
     private static final String TAG_CLIENT = "TAG_CLIENT";
@@ -25,13 +28,27 @@ public class RobinClient {
             super.handleMessage(msg);
             switch (msg.what){
                 case Constants.MSG_FROM_SERVER:
-                    LogUtil.e(TAG_CLIENT, "Client receive:" + msg.obj.toString());
+                    LogUtil.e(TAG_CLIENT, "RobinClient receive:" + msg.obj.toString());
                 default:
             }
         }
     }
 
-    public void start(Context context,SdkListener sdkListener) {
+    public RobinClient(Context context) {
+        SpUtil.setVersionName(context.getApplicationContext(), BuildConfig.VERSION_NAME);
+
+        try {
+            ApplicationInfo applicationInfo = context.getApplicationContext().getPackageManager()
+                    .getApplicationInfo(context.getApplicationContext().getPackageName(), PackageManager.GET_META_DATA);
+            if (applicationInfo != null && applicationInfo.metaData != null) {
+                String key = applicationInfo.metaData.getString("robin.appkey");
+                SpUtil.setAppKey(context.getApplicationContext(), key);
+            }
+        } catch (Throwable ignored) {
+        }
+    }
+
+    public void start(Context context, SdkListener sdkListener) {
         this.sdkListener = sdkListener;
         Intent intent = new Intent(context, RobinService.class);
         mShouldUnbind = context.bindService(intent, connection, Context.BIND_AUTO_CREATE);
@@ -50,9 +67,8 @@ public class RobinClient {
         public void onServiceConnected(ComponentName name, IBinder service) {
             mService = new Messenger(service);
             Message message = Message.obtain(null, Constants.MSG_FROM_CLIENT);
-            Object obj = new Object();
-            LogUtil.e(TAG_CLIENT, "Client send:" + obj.toString());
-            message.obj = obj;
+            LogUtil.e(TAG_CLIENT, "RobinClient send:" + RobinClient.this.getClass().getName());
+            message.obj = RobinClient.this.getClass().getName();
             message.replyTo = mClient;
             try {
                 mService.send(message);

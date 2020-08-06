@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
+import robin.sdk.proxy.ServiceProxy;
 import robin.sdk.service_dynamic.ServiceManager;
-import robin.sdk.sdk_impl.ServiceProxy;
 import robin.sdk.service_dynamic.UpdateManager;
 
 public final class RobinService extends Service {

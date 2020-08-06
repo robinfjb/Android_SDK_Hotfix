@@ -13,13 +13,14 @@ import robin.sdk.hotfix.RobinService;
 import robin.sdk.hotfix.SdkListener;
 
 public class MainActivity extends AppCompatActivity {
-    RobinClient robinClient = new RobinClient();
+    RobinClient robinClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Button button = findViewById(R.id.btn);
+        robinClient = new RobinClient(this);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

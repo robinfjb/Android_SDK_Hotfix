@@ -3,40 +3,65 @@ package robin.sdk.service_dynamic.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import robin.sdk.service_dynamic.net.DyInfo;
+
 public final class SpUtil {
-    public static void setDyInfo(Context context, String md5) {
+    public static void setDyInfo(Context context, DyInfo dyInfo) {
         SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        editor.putString("dy_info", md5);
+        editor.putString("dy_info", dyInfo.toJsonStr());
         editor.apply();
     }
 
-    public static String getDyInfo(Context context) {
+    public static DyInfo getDyInfo(Context context) {
         SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
-        return sp.getString("dy_info", "");
+        String dyinfoStr = sp.getString("dy_info", "");
+        DyInfo dyInfo = null;
+        try {
+            dyInfo = new DyInfo(new JSONObject(dyinfoStr));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return dyInfo;
     }
 
-    public static void setLastUpdateFail(Context context, long lastUpdate) {
+    public static void setVersionName(Context context, String version) {
         SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        editor.putLong("last_fail_time", lastUpdate);
+        editor.putString("version", version);
         editor.apply();
     }
 
-    public static long getLastUpdateFail(Context context) {
+    public static String getVersionName(Context context) {
         SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
-        return sp.getLong("last_fail_time", 0);
+        return sp.getString("version", null);
     }
 
-    public static void setLastUpdate(Context context, long lastUpdate) {
+    public static void setPatchVersion(Context context, int version) {
         SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        editor.putLong("last_update_time", lastUpdate);
+        editor.putInt("patch_version", version);
         editor.apply();
     }
 
-    public static long getLastCheckUpdate(Context context) {
+    public static int getPatchVersionName(Context context) {
         SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
-        return sp.getLong("last_update_time", 0);
+        return sp.getInt("patch_version", -1);
     }
+
+    public static void setAppKey(Context context, String key) {
+        SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("appkey", key);
+        editor.apply();
+    }
+
+    public static String getAppKey(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+        return sp.getString("appkey", null);
+    }
+
 }

@@ -1,4 +1,4 @@
-package robin.sdk.sdk_impl;
+package robin.sdk.proxy;
 
 import android.content.Context;
 import android.content.Intent;

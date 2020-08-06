@@ -9,9 +9,11 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
+import robin.sdk.proxy.BuildConfig;
+import robin.sdk.proxy.ServiceProxy;
 import robin.sdk.sdk_impl.util.LogUtil;
 
-public class ServiceImpl implements ServiceProxy{
+public class ServiceImpl implements ServiceProxy {
     private static final String TAG_SERVICE = "TAG_SERVICE";
     private Messenger mService = new Messenger(new ReceiverHandler());
     private Messenger mClient;
@@ -68,9 +70,8 @@ public class ServiceImpl implements ServiceProxy{
 
     private void sendMsg2Client() {
         Message message = Message.obtain(null,Constants.MSG_FROM_SERVER);
-        Object obj = new Object();
-        LogUtil.e(TAG_SERVICE, "Service send:" + obj.toString());
-        message.obj = obj;
+        LogUtil.e(TAG_SERVICE, "Service send:" + ServiceImpl.class.getName());
+        message.obj = ServiceImpl.class.getName();
         mClient = receiveMsg.replyTo;
         try {
             mClient.send(message);

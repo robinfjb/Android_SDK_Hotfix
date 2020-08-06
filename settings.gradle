@@ -1,3 +1,4 @@
+include ':sdk-proxy'
 include ':testapp'
 include ':sdk-impl'
 include ':sdk-dynamic'

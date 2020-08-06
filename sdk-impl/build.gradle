@@ -1,3 +1,5 @@
+import java.security.MessageDigest
+
 apply plugin: 'com.android.library'
 
 android {
@@ -20,6 +22,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions.encoding="UTF-8"
 }
 
 dependencies {
@@ -29,4 +33,62 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    implementation project(":sdk-proxy")
+}
+
+//打包任务
+task makeHotJar(type: Jar) {
+    //指定生成的jar名
+    baseName 'hot'
+    //从哪里打包class文件
+    from('build/intermediates/javac/release/classes/')
+}
+makeHotJar.dependsOn(clean,'compileReleaseJavaWithJavac')
+
+task jarToDex(type: Exec) {
+    //借助windows的cmd命令行执行
+    commandLine 'cmd'
+
+    doFirst {
+        //jar文件对象
+        def srcFile = file("/build/libs/hot.jar")
+        //需要生成的dex文件对象
+        def desFile = file(srcFile.parent + "/" + "dex.jar")
+
+        //此行可以不需要
+        workingDir srcFile.parent
+
+        //拼接dx.bat执行的参数
+        def list = []
+        list.add("/c")
+        list.add("dx")
+        list.add("--dex")
+        list.add("--output")
+        list.add(desFile)
+        list.add(srcFile)
+
+        //设置参数到cmd命令行
+        args list
+    }
+}
+jarToDex.dependsOn(makeHotJar)
+
+task md5() {
+    doLast {
+        def file = file("build/libs/dex.jar")
+        println(generateMd5(file))
+    }
+}
+def generateMd5(final file) {
+    MessageDigest digest = MessageDigest.getInstance("MD5")
+    file.withInputStream(){is->
+        byte[] buffer = new byte[8192]
+        int read = 0
+        while( (read = is.read(buffer)) > 0) {
+            digest.update(buffer, 0, read);
+        }
+    }
+    byte[] md5sum = digest.digest()
+    BigInteger bigInt = new BigInteger(1, md5sum)
+    bigInt.toString(16).padLeft(32, '0')
 }
