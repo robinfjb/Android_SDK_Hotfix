@@ -13,6 +13,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/sdk" />
+            <option value="$PROJECT_DIR$/sdk-common" />
             <option value="$PROJECT_DIR$/sdk-dynamic" />
             <option value="$PROJECT_DIR$/sdk-impl" />
             <option value="$PROJECT_DIR$/sdk-proxy" />

@@ -18,7 +18,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPOutputStream;
 
-import robin.sdk.sdk_impl.util.LogUtil;
+import robin.sdk.sdk_common.util.LogUtil;
 
 public final class HttpUrlTask extends AsyncTask<Void, Void, String> {
     public interface TaskListener {
@@ -124,19 +124,11 @@ public final class HttpUrlTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(final String result) {
         super.onPostExecute(result);
-        try {
-            TPE.execute(new Runnable() {
-                @Override
-                public void run() {
-                    if (taskListener != null) {
-                        LogUtil.e(HTTP_TAG, "taskListener CALLBACK");
-                        taskListener.onTaskComplete(statusCode, statusMessage, result);
-                    } else {
-                        LogUtil.e(HTTP_TAG, "taskListener is null");
-                    }
-                }
-            });
-        } catch (Throwable e) {
+        LogUtil.e(HTTP_TAG,"result:" + result);
+        if (taskListener != null) {
+            taskListener.onTaskComplete(statusCode, statusMessage, result);
+        } else {
+            LogUtil.e(HTTP_TAG, "taskListener is null");
         }
     }
 

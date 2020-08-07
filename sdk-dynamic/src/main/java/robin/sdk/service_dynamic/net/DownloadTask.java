@@ -12,7 +12,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import robin.sdk.sdk_impl.util.LogUtil;
+import robin.sdk.sdk_common.util.LogUtil;
 
 public final class DownloadTask extends AsyncTask<Void, Void, String> {
     public interface DownloadListener {

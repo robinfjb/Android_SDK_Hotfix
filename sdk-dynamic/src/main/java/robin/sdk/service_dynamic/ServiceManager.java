@@ -7,10 +7,9 @@ import java.io.File;
 
 import dalvik.system.DexClassLoader;
 import robin.sdk.proxy.ServiceProxy;
-import robin.sdk.sdk_impl.ServiceImpl;
+import robin.sdk.sdk_common.util.LogUtil;
 import robin.sdk.service_dynamic.net.DyInfo;
 import robin.sdk.service_dynamic.util.FileUtil;
-import robin.sdk.sdk_impl.util.LogUtil;
 import robin.sdk.service_dynamic.util.Md5Util;
 import robin.sdk.service_dynamic.util.SpUtil;
 
@@ -45,11 +44,9 @@ public class ServiceManager {
             LogUtil.e(DYNAMIC_TAG, "未检测到新的动态包");
         }
 
-        lib = new ServiceImpl();
-
         try {
             DyInfo dyInfo = SpUtil.getDyInfo(context);
-            if (checkJar(dyInfo, usingJar)) {
+            if (UpdateManager.checkDyInfo(context, dyInfo) && checkJar(dyInfo, usingJar)) {
                 DexClassLoader dexClassLoader = new DexClassLoader(usingJar.getAbsolutePath(),
                         context.getCacheDir().getAbsolutePath(), null, context.getClassLoader());
                 Class libclass = dexClassLoader.loadClass(dyInfo.className);
@@ -59,7 +56,14 @@ public class ServiceManager {
             }
         } catch (Throwable throwable) {
             LogUtil.e(DYNAMIC_TAG, "动态包加载异常:" + throwable.getLocalizedMessage());
-            lib = new ServiceImpl();
+        }
+        if(lib == null) {
+            try {
+                Class libclass = context.getClassLoader().loadClass("robin.sdk.sdk_impl.ServiceImpl");
+                lib = (ServiceProxy) libclass.newInstance();
+            } catch (Throwable throwable) {
+                LogUtil.e(DYNAMIC_TAG, "正常包加载异常:" + throwable.getLocalizedMessage());
+            }
         }
         return lib;
     }

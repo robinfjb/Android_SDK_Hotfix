@@ -2,11 +2,11 @@
  * Copyright (C) 2017 GlobalEarth, Inc. All Rights Reserved.
  */
 
-package robin.sdk.sdk_impl.util;
+package robin.sdk.sdk_common.util;
 
 import android.util.Log;
 
-import robin.sdk.sdk_impl.BuildConfig;
+import robin.sdk.sdk_common.BuildConfig;
 
 public final class LogUtil {
     private static int LOG_MAXLENGTH = 2000;

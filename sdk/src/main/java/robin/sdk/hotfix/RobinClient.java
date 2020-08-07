@@ -12,8 +12,8 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
-import robin.sdk.sdk_impl.Constants;
-import robin.sdk.sdk_impl.util.LogUtil;
+import robin.sdk.sdk_common.Constants;
+import robin.sdk.sdk_common.util.LogUtil;
 import robin.sdk.service_dynamic.util.SpUtil;
 
 public class RobinClient {

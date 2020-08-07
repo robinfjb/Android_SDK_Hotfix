@@ -1,4 +1,4 @@
-package robin.sdk.sdk_impl;
+package robin.sdk.sdk_common;
 
 public interface Constants {
     int MSG_FROM_CLIENT = 101;

@@ -34,18 +34,19 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation project(":sdk-proxy")
+    implementation project(":sdk-common")
 }
 
 //打包任务
-task makeHotJar(type: Jar) {
+task _makeHotJar(type: Jar) {
     //指定生成的jar名
     baseName 'hot'
     //从哪里打包class文件
     from('build/intermediates/javac/release/classes/')
 }
-makeHotJar.dependsOn(clean,'compileReleaseJavaWithJavac')
+_makeHotJar.dependsOn(clean,'compileReleaseJavaWithJavac')
 
-task jarToDex(type: Exec) {
+task _jarToDex(type: Exec) {
     //借助windows的cmd命令行执行
     commandLine 'cmd'
 
@@ -71,9 +72,9 @@ task jarToDex(type: Exec) {
         args list
     }
 }
-jarToDex.dependsOn(makeHotJar)
+//jarToDex.dependsOn(makeHotJar)
 
-task md5() {
+task _md5() {
     doLast {
         def file = file("build/libs/dex.jar")
         println(generateMd5(file))

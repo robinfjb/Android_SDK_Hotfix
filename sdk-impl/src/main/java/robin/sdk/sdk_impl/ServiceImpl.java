@@ -11,13 +11,15 @@ import android.os.RemoteException;
 
 import robin.sdk.proxy.BuildConfig;
 import robin.sdk.proxy.ServiceProxy;
-import robin.sdk.sdk_impl.util.LogUtil;
+import robin.sdk.sdk_common.Constants;
+import robin.sdk.sdk_common.util.LogUtil;
 
 public class ServiceImpl implements ServiceProxy {
     private static final String TAG_SERVICE = "TAG_SERVICE";
     private Messenger mService = new Messenger(new ReceiverHandler());
     private Messenger mClient;
     private Message receiveMsg;
+    private BizTest bizTest2;
 
     class ReceiverHandler extends Handler {
         @Override
@@ -35,7 +37,9 @@ public class ServiceImpl implements ServiceProxy {
 
     @Override
     public void onCreate(Context var1) {
-
+        bizTest2 = new BizTest();
+        LogUtil.e(TAG_SERVICE, "get str=" + bizTest2.testStr());
+        LogUtil.e(TAG_SERVICE, "get static=" + BizTest.testStatic());
     }
 
     @Override
@@ -69,7 +73,7 @@ public class ServiceImpl implements ServiceProxy {
     }
 
     private void sendMsg2Client() {
-        Message message = Message.obtain(null,Constants.MSG_FROM_SERVER);
+        Message message = Message.obtain(null, Constants.MSG_FROM_SERVER);
         LogUtil.e(TAG_SERVICE, "Service send:" + ServiceImpl.class.getName());
         message.obj = ServiceImpl.class.getName();
         mClient = receiveMsg.replyTo;

@@ -11,7 +11,7 @@ import java.io.File;
 import robin.sdk.service_dynamic.net.DownloadTask;
 import robin.sdk.service_dynamic.net.DyInfo;
 import robin.sdk.service_dynamic.net.HttpUrlTask;
-import robin.sdk.sdk_impl.util.LogUtil;
+import robin.sdk.sdk_common.util.LogUtil;
 import robin.sdk.service_dynamic.util.Md5Util;
 import robin.sdk.service_dynamic.util.SpUtil;
 
@@ -64,7 +64,7 @@ public class UpdateManager {
                     LogUtil.e(UPDATE_TAG, "statusCode = "+ statusCode);
                 }
             }
-        }).executeWithThreadPool();
+        }).execute();
     }
 
     public static void checkUpdate(Context context) {
@@ -74,12 +74,11 @@ public class UpdateManager {
     /**
      * 是否需要下载运行补丁
      */
-    private static boolean checkDyInfo(Context context, DyInfo dyInfo) {
+    public static boolean checkDyInfo(Context context, DyInfo dyInfo) {
         if (dyInfo == null) {
             return false;
         }
         LogUtil.e(UPDATE_TAG, "dyInfo:" + dyInfo.toString());
-        /* just support md5 */
         if (!"md5".equals(dyInfo.checksumType)) {
             LogUtil.e(UPDATE_TAG, "checksumType error");
             return false;
@@ -106,6 +105,8 @@ public class UpdateManager {
         //目前运行的补丁号
         int patchVersion = SpUtil.getPatchVersionName(context);
         boolean result = currentVersion.equalsIgnoreCase(dyInfo.targetVersion) && patchVersion < dyInfo.subVersion;
+        LogUtil.e(UPDATE_TAG, "currentVersion:" + currentVersion);
+        LogUtil.e(UPDATE_TAG, "patchVersion:" + patchVersion);
         return result;
     }
 
