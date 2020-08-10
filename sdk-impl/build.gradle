@@ -37,7 +37,7 @@ dependencies {
     implementation project(":sdk-common")
 }
 
-//打包任务
+//打patch任务
 task _makeHotJar(type: Jar) {
     //指定生成的jar名
     baseName 'hot'

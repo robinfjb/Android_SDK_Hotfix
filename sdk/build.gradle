@@ -33,3 +33,17 @@ dependencies {
     implementation project(":sdk-proxy")
     implementation project(":sdk-common")
 }
+
+//打完整sdk包
+task _makeSdkJar(type: Jar) {
+
+   //指定生成的jar名
+    baseName 'sdk'
+    //从哪里打包class文件
+    from('build/intermediates/javac/debug/classes/')
+    from('../sdk-proxy/build/intermediates/javac/debug/classes/')
+    from('../sdk-common/build/intermediates/javac/debug/classes/')
+    from('../sdk-dynamic/build/intermediates/javac/debug/classes/')
+    from('../sdk-impl/build/intermediates/javac/debug/classes/')
+}
+_makeSdkJar.dependsOn(clean, 'compileDebugJavaWithJavac')
