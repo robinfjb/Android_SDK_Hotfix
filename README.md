@@ -24,7 +24,23 @@ sdk-proxy（sdk与sdk-impl的接口）
 sdk-common（工具类）
 
 ### 3.打包
-打jar包
+打完整的sdk包
+```
+task _makeSdkJar(type: Jar) {
+
+   //指定生成的jar名
+    baseName 'sdk'
+    //从哪里打包class文件
+    from('build/intermediates/javac/debug/classes/')
+    from('../sdk-proxy/build/intermediates/javac/debug/classes/')
+    from('../sdk-common/build/intermediates/javac/debug/classes/')
+    from('../sdk-dynamic/build/intermediates/javac/debug/classes/')
+    from('../sdk-impl/build/intermediates/javac/debug/classes/')
+}
+_makeSdkJar.dependsOn(clean, 'compileDebugJavaWithJavac')
+```
+
+打patch包
 ```
 task _makeHotJar(type: Jar) {
     //指定生成的jar名
