@@ -3,7 +3,9 @@ package robin.sdk.service_dynamic.net;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DyInfo {
+import java.io.Serializable;
+
+public class DyInfo implements Serializable {
     public String targetVersion;//目标版本号
     public int subVersion;//补丁版本号
     public String packageUrl;

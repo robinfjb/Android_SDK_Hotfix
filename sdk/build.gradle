@@ -14,8 +14,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -36,7 +40,6 @@ dependencies {
 
 //打完整sdk包
 task _makeSdkJar(type: Jar) {
-
    //指定生成的jar名
     baseName 'sdk'
     //从哪里打包class文件
@@ -47,3 +50,14 @@ task _makeSdkJar(type: Jar) {
     from('../sdk-impl/build/intermediates/javac/debug/classes/')
 }
 _makeSdkJar.dependsOn(clean, 'compileDebugJavaWithJavac')
+
+///导出sdk location jar包
+task proguardJar(type: proguard.gradle.ProGuardTask) {
+//        delete "build/libs/classes.jar"
+    String inJar = _makeSdkJar.archivePath.getAbsolutePath()
+    println("正在混淆jar...path= " + inJar)
+
+    injars inJar
+    outjars "build/libs/classes.jar"
+    configuration "$rootDir/sdk-dynamic/proguard-rules.pro"
+}
