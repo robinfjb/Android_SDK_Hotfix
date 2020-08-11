@@ -39,6 +39,18 @@ task _makeSdkJar(type: Jar) {
 }
 _makeSdkJar.dependsOn(clean, 'compileDebugJavaWithJavac')
 ```
+sdk的混淆
+```
+task proguardJar(type: proguard.gradle.ProGuardTask) {
+    delete "build/libs/classes.jar"
+    String inJar = _makeSdkJar.archivePath.getAbsolutePath()
+    println("正在混淆jar...path= " + inJar)
+
+    injars inJar
+    outjars "build/libs/classes.jar"
+    configuration "$rootDir/sdk/proguard-rules.pro"
+}
+```
 
 打patch包
 ```
