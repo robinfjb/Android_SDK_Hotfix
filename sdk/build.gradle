@@ -53,11 +53,11 @@ _makeSdkJar.dependsOn(clean, 'compileDebugJavaWithJavac')
 
 ///导出sdk location jar包
 task proguardJar(type: proguard.gradle.ProGuardTask) {
-//        delete "build/libs/classes.jar"
+    delete "build/libs/classes.jar"
     String inJar = _makeSdkJar.archivePath.getAbsolutePath()
     println("正在混淆jar...path= " + inJar)
 
     injars inJar
     outjars "build/libs/classes.jar"
-    configuration "$rootDir/sdk-dynamic/proguard-rules.pro"
+    configuration "$rootDir/sdk/proguard-rules.pro"
 }
