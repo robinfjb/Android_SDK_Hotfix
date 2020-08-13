@@ -39,10 +39,9 @@ task _makeSdkJar(type: Jar) {
 }
 _makeSdkJar.dependsOn(clean, 'compileDebugJavaWithJavac')
 ```
-sdk的混淆
+混淆
 ```
 task proguardJar(type: proguard.gradle.ProGuardTask) {
-    delete "build/libs/classes.jar"
     String inJar = _makeSdkJar.archivePath.getAbsolutePath()
     println("正在混淆jar...path= " + inJar)
 
@@ -52,43 +51,33 @@ task proguardJar(type: proguard.gradle.ProGuardTask) {
 }
 ```
 
-打patch包
+打补丁包
 ```
-task _makeHotJar(type: Jar) {
-    //指定生成的jar名
-    baseName 'hot'
-    //从哪里打包class文件
-    from('build/intermediates/javac/release/classes/')
+task renameJar(type: Copy) {
+    from 'build/libs/'
+    include 'proguard.jar'
+    destinationDir file('build/libs/')
+    rename 'proguard.jar', "classes.zip"
 }
-_makeHotJar.dependsOn(clean,'compileReleaseJavaWithJavac')
-```
 
-打dex包
-```
-task _jarToDex(type: Exec) {
-    //借助windows的cmd命令行执行
-    commandLine 'cmd'
+task upzip(dependsOn: renameJar, type: Copy) {
+    def zipFile = file('build/libs/classes.zip')
+    def outputDir = file("build/libs/unzip")
+    from zipTree(zipFile)
+    into outputDir
+}
 
-    doFirst {
-        //jar文件对象
-        def srcFile = file("/build/libs/hot.jar")
-        //需要生成的dex文件对象
-        def desFile = file(srcFile.parent + "/" + "dex.jar")
-
-        //此行可以不需要
-        workingDir srcFile.parent
-
-        //拼接dx.bat执行的参数
-        def list = []
-        list.add("/c")
-        list.add("dx")
-        list.add("--dex")
-        list.add("--output")
-        list.add(desFile)
-        list.add(srcFile)
-
-        //设置参数到cmd命令行
-        args list
+task _patchProguardJar(dependsOn: upzip, type: Jar) {
+//指定生成的jar名
+    baseName 'patch'
+    from('build/libs/unzip/')
+    exclude('robin/sdk/hotfix')
+    exclude('robin/sdk/proxy')
+    exclude('robin/sdk/sdk_common')
+    exclude('robin/sdk/service_dynamic')
+    doLast {
+        delete('build/libs/unzip')
+        delete('build/libs/classes.zip')
     }
 }
 ```
