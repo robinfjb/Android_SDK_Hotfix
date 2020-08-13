@@ -112,8 +112,8 @@
      public void *(android.webkit.WebView,java.lang.String);
 }
 #反射类
--keep public class robin.sdk.sdk_impl.ServiceImpl {*;}
--keep class robin.sdk.sdk_impl.ServiceImpl$* {*;}
+-keep public class robin.sdk.*.ServiceImpl {*;}
+-keep class robin.sdk.*.ServiceImpl$* {*;}
 #sdk
 -keep public class robin.sdk.hotfix.RobinClient {*;}
 -keep class robin.sdk.hotfix.RobinClient$* {*;}

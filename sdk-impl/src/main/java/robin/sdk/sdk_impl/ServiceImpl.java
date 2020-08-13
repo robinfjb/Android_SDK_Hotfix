@@ -9,7 +9,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
-import robin.sdk.proxy.BuildConfig;
 import robin.sdk.proxy.ServiceProxy;
 import robin.sdk.sdk_common.Constants;
 import robin.sdk.sdk_common.util.LogUtil;
@@ -59,17 +58,6 @@ public class ServiceImpl implements ServiceProxy {
 
     @Override
     public void onDestroy() {
-
-    }
-
-    @Override
-    public String getVersion() {
-        return BuildConfig.VERSION_NAME;
-    }
-
-    @Override
-    public int getVersionCode() {
-        return BuildConfig.VERSION_CODE;
     }
 
     private void sendMsg2Client() {

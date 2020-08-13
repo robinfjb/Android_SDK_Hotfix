@@ -14,8 +14,4 @@ public interface ServiceProxy {
     boolean onUnBind(Intent var1);
 
     void onDestroy();
-
-    String getVersion();
-
-    int getVersionCode();
 }

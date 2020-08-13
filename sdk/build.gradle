@@ -1,3 +1,5 @@
+import java.security.MessageDigest
+
 apply plugin: 'com.android.library'
 
 android {
@@ -39,7 +41,10 @@ dependencies {
 }
 
 //打完整sdk包
-task _makeSdkJar(type: Jar) {
+task makeSdkJar(type: Jar) {
+    doFirst {
+        delete('build/libs/sdk.jar')
+    }
    //指定生成的jar名
     baseName 'sdk'
     //从哪里打包class文件
@@ -49,15 +54,91 @@ task _makeSdkJar(type: Jar) {
     from('../sdk-dynamic/build/intermediates/javac/debug/classes/')
     from('../sdk-impl/build/intermediates/javac/debug/classes/')
 }
-_makeSdkJar.dependsOn(clean, 'compileDebugJavaWithJavac')
+makeSdkJar.dependsOn(clean, 'compileDebugJavaWithJavac')
 
-///导出sdk location jar包
-task proguardJar(type: proguard.gradle.ProGuardTask) {
-    delete "build/libs/classes.jar"
-    String inJar = _makeSdkJar.archivePath.getAbsolutePath()
+///混淆
+task _proguardJar(dependsOn: makeSdkJar, type: proguard.gradle.ProGuardTask) {
+    String inJar = makeSdkJar.archivePath.getAbsolutePath()
     println("正在混淆jar...path= " + inJar)
 
     injars inJar
-    outjars "build/libs/classes.jar"
+    outjars "build/libs/proguard.jar"
     configuration "$rootDir/sdk/proguard-rules.pro"
+}
+
+task renameJar(type: Copy) {
+    from 'build/libs/'
+    include 'proguard.jar'
+    destinationDir file('build/libs/')
+    rename 'proguard.jar', "classes.zip"
+//    delete "build/libs/proguard.jar"
+}
+
+task upzip(dependsOn: renameJar, type: Copy) {
+    def zipFile = file('build/libs/classes.zip')
+    def outputDir = file("build/libs/unzip")
+    from zipTree(zipFile)
+    into outputDir
+}
+
+task _patchProguardJar(dependsOn: upzip, type: Jar) {
+//指定生成的jar名
+    baseName 'patch'
+    from('build/libs/unzip/')
+    exclude('robin/sdk/hotfix')
+    exclude('robin/sdk/proxy')
+    exclude('robin/sdk/sdk_common')
+    exclude('robin/sdk/service_dynamic')
+    doLast {
+        delete('build/libs/unzip')
+        delete('build/libs/classes.zip')
+    }
+}
+
+task _jarToDex(type: Exec) {
+    //借助windows的cmd命令行执行
+    commandLine 'cmd'
+
+    doFirst {
+        //jar文件对象
+        def srcFile = file("/build/libs/patch.jar")
+        //需要生成的dex文件对象
+        def desFile = file(srcFile.parent + "/" + "dex.jar")
+
+        //此行可以不需要
+        workingDir srcFile.parent
+
+        //拼接dx.bat执行的参数
+        def list = []
+        list.add("/c")
+        list.add("dx")
+        list.add("--dex")
+        list.add("--output")
+        list.add(desFile)
+        list.add(srcFile)
+
+        //设置参数到cmd命令行
+        args list
+    }
+}
+//jarToDex.dependsOn(makeHotJar)
+
+task _md5() {
+    doLast {
+        def file = file("build/libs/dex.jar")
+        println(generateMd5(file))
+    }
+}
+def generateMd5(final file) {
+    MessageDigest digest = MessageDigest.getInstance("MD5")
+    file.withInputStream(){is->
+        byte[] buffer = new byte[8192]
+        int read = 0
+        while( (read = is.read(buffer)) > 0) {
+            digest.update(buffer, 0, read);
+        }
+    }
+    byte[] md5sum = digest.digest()
+    BigInteger bigInt = new BigInteger(1, md5sum)
+    bigInt.toString(16).padLeft(32, '0')
 }
