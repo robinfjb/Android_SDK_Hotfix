@@ -24,6 +24,9 @@ sdk-proxy（sdk与sdk-impl的接口）
 sdk-common（工具类）
 
 ### 3.打包
+打sdk： _makeSdkJar-》proguardJar
+打patch：_makeSdkJar-》proguardJar-》renameJar-》upzip-》_patchProguardJar-》_md5
+
 打完整的sdk包
 ```
 task _makeSdkJar(type: Jar) {
